@@ -100,15 +100,16 @@ class RacingKingsEnv(gym.Env):
             for col in range(self.width):
                 color = "white"
                 if (row + col) % 2 == 0:
-                    color = "gray"
+                    color = (117,150,86)
+
                 else:
-                    color = "white"
+                    color = (238,238,210)
 
                 pygame.draw.rect(self.screen, color, (col * self.cell_size, row * self.cell_size, self.cell_size, self.cell_size))
                 if(row == 0):
                     # the first line is our goal and it should have a small shadow on the bottom:
                     pygame.draw.rect(self.screen, "black", (col * self.cell_size, row * self.cell_size + self.cell_size - 5, self.cell_size, 5))
-                # here is the king initial place:
+        # here is the king initial place:
         king = pygame.image.load("images/white-king.svg")
         king = pygame.transform.scale(king, (self.cell_size, self.cell_size))
 
@@ -123,12 +124,11 @@ class RacingKingsEnv(gym.Env):
         
         print("rendering the board:")
         print(self.board)
+        
         # flip() the display to put your work on screen
         pygame.display.flip()
 
         self.clock.tick(5)  # limits FPS to 1
-
-        # screen.update();
 
 
 if __name__ == "__main__":
