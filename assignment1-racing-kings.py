@@ -110,13 +110,13 @@ class RacingKingsEnv(gym.Env):
                     # the first line is our goal and it should have a small shadow on the bottom:
                     pygame.draw.rect(self.screen, "black", (col * self.cell_size, row * self.cell_size + self.cell_size - 5, self.cell_size, 5))
         # here is the king initial place:
-        king = pygame.image.load("images/white-king.svg")
+        king = pygame.image.load("chess-images/white-king.svg")
         king = pygame.transform.scale(king, (self.cell_size, self.cell_size))
 
         self.screen.blit(king, (self.king[1][0]* self.cell_size, self.king[0][0]* self.cell_size))
 
         # here is the opponent beshop:
-        bishop = pygame.image.load("images/black-bishop.svg")
+        bishop = pygame.image.load("chess-images/black-bishop.svg")
         bishop = pygame.transform.scale(bishop, (self.cell_size, self.cell_size))
 
         if(self.bishop[0]):
@@ -124,11 +124,10 @@ class RacingKingsEnv(gym.Env):
         
         print("rendering the board:")
         print(self.board)
-        
+
         # flip() the display to put your work on screen
         pygame.display.flip()
-
-        self.clock.tick(5)  # limits FPS to 1
+        self.clock.tick(1)  # limits FPS to 1
 
 
 if __name__ == "__main__":
