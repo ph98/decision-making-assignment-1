@@ -125,9 +125,9 @@ class RacingKingsEnv(gym.Env):
         print("rendering the board:")
         print(self.board)
 
-        # flip() the display to put your work on screen
+        # flip() the display to put the work on screen
         pygame.display.flip()
-        self.clock.tick(1)  # limits FPS to 1
+        self.clock.tick(10)  # limits FPS to 1
 
 
 if __name__ == "__main__":
