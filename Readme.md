@@ -17,3 +17,8 @@ $ virtualenv <env_name>
 $ source <env_name>/bin/activate
 (<env_name>)$ pip install -r path/to/requirements.txt 
 ```
+
+
+# About the delivery:
+    the icons are from freepik.com
+    the environment designed for a delivery to pick up the food from the restourant and give it to the customer.
