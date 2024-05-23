@@ -93,6 +93,7 @@ class DeliveryEnv(gym.Env):
 
     def renderPicture(self, image, i, j):
         pygame.draw.rect(self.screen, (255, 255, 255), (i * self.cell_size, j * self.cell_size, self.cell_size - 1, self.cell_size - 1))    
+        
         scaledImage = pygame.transform.scale(image, (self.cell_size, self.cell_size))
         self.screen.blit(scaledImage, (i * self.cell_size, j * self.cell_size))
 
@@ -140,22 +141,65 @@ class DeliveryEnv(gym.Env):
 
         # update the screen
         pygame.display.flip()
-        self.clock.tick(60)
+        self.clock.tick(6)
 
         #show the turn
         print(f'Turn: {self.turn}')
         pygame.display.set_caption(f'Turn: {self.turn}')
 
 
+def dfs(env, start, goal, path= [], shortest= None, visited = None):
+    x, y = start
+    if(start == goal):
+        return path
+    if visited is None:
+        visited = set()
+
+    if(shortest != None and len(path) >= len(shortest)):
+        return None
+    
+    visited.add(start)
+    for moveIndex in range(len(navigations)):
+        dx, dy = navigations[moveIndex]
+        nx, ny = x + dx, y + dy
+        if nx >= 0 and nx < env.width and ny >= 0 and ny < env.height and (nx, ny) not in env.treesArray and (nx, ny) not in visited:
+            if (nx, ny) not in path:
+                new_path = dfs(env, (nx, ny), goal, path + [moveIndex], shortest, visited)
+                if new_path != None:
+                    shortest = new_path
+    visited.remove(start)
+    return shortest
+
 if __name__ == '__main__':
     env = DeliveryEnv()
     env.reset()
-    for _ in range(100000):
-        pos, reward, done, info = env.step(env.action_space.sample())
-        print('Info:', info)
+
+    # use dfs to find the shortest path to restaurant (complete search!)
+    actions = dfs(env, env.deliveryPosition, env.restourantPosition)
+
+    print(actions)
+    for action in actions:
+        pos, reward, done, info = env.step(action)
         env.render()
         if done:
-            env.close()
+            break
+
+    actions = dfs(env, env.restourantPosition, env.customerPosition)
+
+    print(actions)
+    for action in actions:
+        pos, reward, done, info = env.step(action)
+        env.render()
+        if done:
+            break
+    
+    # random actions:
+    # for _ in range(100000):
+    #     pos, reward, done, info = env.step(env.action_space.sample())
+    #     print('Info:', info)
+    #     env.render()
+    #     if done:
+    #         env.close()
     env.close()
 
         
