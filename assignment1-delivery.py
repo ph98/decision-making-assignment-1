@@ -21,6 +21,9 @@ class DeliveryEnv(gym.Env):
         no args
     """
     def __init__(self):
+        """ 
+            initialises the delivery environment
+        """
         super().__init__()
 
         self.width = 10
@@ -38,10 +41,11 @@ class DeliveryEnv(gym.Env):
         self.clock = pygame.time.Clock()
 
 
+       
+    def reset(self):
         """
          reset the environment and return the initial state and distance to goal
         """
-    def reset(self):
 
         self.deliveryPosition = (0, 0)
         self.turn = 0
@@ -58,6 +62,7 @@ class DeliveryEnv(gym.Env):
         return self.deliveryPosition, distance_to_goal
 
 
+    def step(self, action):
         """
         take a step in the environment using an action including moving the delivery agent, checking if the delivery agent is at the restaurant position, customer position, or out of bounds
         args:
@@ -68,7 +73,6 @@ class DeliveryEnv(gym.Env):
             done: bool
             info: dict
         """
-    def step(self, action):
         # reward is negative for each step
         reward = -0.05
         done = False
@@ -111,6 +115,8 @@ class DeliveryEnv(gym.Env):
 
 
     
+        
+    def _renderPicture(self, image, i, j):
         """
         a helper function to render a picture in the environment using a given png/svg file in the specified position
         args:
@@ -118,12 +124,12 @@ class DeliveryEnv(gym.Env):
             i: int
             j: int
         """
-    def _renderPicture(self, image, i, j):
         pygame.draw.rect(self.screen, (255, 255, 255), (i * self.cell_size, j * self.cell_size, self.cell_size - 1, self.cell_size - 1))    
         scaledImage = pygame.transform.scale(image, (self.cell_size, self.cell_size))
         self.screen.blit(scaledImage, (i * self.cell_size, j * self.cell_size))
         pass
     
+    def _renderTree(self, i, j, turn=0):
         """
         a helper function to render a tree in the environment
         args:
@@ -131,7 +137,6 @@ class DeliveryEnv(gym.Env):
             j: int
             turn: int
         """
-    def _renderTree(self, i, j, turn=0):
         # sorry, I am not good at drawing trees -\_(-_-)_/-
         # but it should feel like it is windy
         treeImages = [treeImage0, treeImage1, treeImage2, treeImage3, treeImage2, treeImage1]
@@ -143,18 +148,18 @@ class DeliveryEnv(gym.Env):
         self.screen.blit(scaledImage, (i * self.cell_size + gap / 2, j * self.cell_size))
         pass
     
+    def close(self):
         """
         close the environment
         """
-    def close(self):
         pygame.quit()
         pass
     
 
+    def render(self):
         """
         render the environment, draw the environment, trees, delivery agent, restaurant, customer, and update the screen
         """
-    def render(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.close()
@@ -198,20 +203,20 @@ end of the DeliveryEnvClass implementation
 start of the usage sample of the DeliveryEnv
 """
 
-"""
-a dfs function to find the shortest path from start to goal in the environment
-(this part developed in the practical season as Adi suggested, probably not part of the criteria of the assignment, but I thought it would be nice to include it as well)
-args:
-    env: DeliveryEnv
-    start: tuple
-    goal: tuple
-    path: list
-    shortest: list
-    visited: set
-returns:
-    shortest: list
-"""
 def dfs(env, start, goal, path= [], shortest= None, visited = None) -> list:
+    """
+    a dfs function to find the shortest path from start to goal in the environment
+    (this part developed in the practical season as Adi suggested, probably not part of the criteria of the assignment, but I thought it would be nice to include it as well)
+    args:
+        env: DeliveryEnv
+        start: tuple
+        goal: tuple
+        path: list
+        shortest: list
+        visited: set
+    returns:
+        shortest: list
+    """
     x, y = start
     if(start == goal):
         return path
@@ -233,10 +238,10 @@ def dfs(env, start, goal, path= [], shortest= None, visited = None) -> list:
     visited.remove(start)
     return shortest
 
+def _renderAlert(env, message):
     """
     a helper function to render an alert message on the screen, and wait for 3 seconds to close it
     """
-def _renderAlert(env, message):
     pygame.display.set_caption(message)
     env.render()
     pygame.time.wait(3000)
