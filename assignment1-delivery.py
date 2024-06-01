@@ -1,6 +1,5 @@
 import pygame
 import gymnasium as gym
-import numpy as np
 import math
 
 homeImage = pygame.image.load('./delivery-images/home1.png')
@@ -11,8 +10,11 @@ treeImage2 = pygame.image.load('./delivery-images/tree2.png')
 treeImage3 = pygame.image.load('./delivery-images/tree3.png')
 deliveryImage = pygame.image.load('./delivery-images/delivery.png')
 deliveryWithBurgurImage = pygame.image.load('./delivery-images/delivery-with-burger.png')
+holeImage = pygame.image.load('./delivery-images/hole.png')
 
 navigations = [ (0, 1), (0, -1), (1, 0), (-1, 0) ]
+
+# wirte a random stuff
 
 class DeliveryEnv(gym.Env):
     """ initialises the delivery environment
@@ -30,7 +32,6 @@ class DeliveryEnv(gym.Env):
         self.height = 10
         self.cell_size = 100
         self.action_space = gym.spaces.Discrete(4)
-        self.observation_space = gym.spaces.Box(low=-1, high=1, shape=(self.width, self.height, 1))
         self.customerPosition = (9, 9)
         self.restourantPosition = (0, 9)
         self.reset()
@@ -56,6 +57,10 @@ class DeliveryEnv(gym.Env):
             (1, 1), (1, 6), (1, 7), (2, 4), (2, 5),
             (3, 1), (2, 2), (3, 3), (9, 4), (9, 5),
             (5,9), (6, 9)
+        ]
+
+        self.holesArray = [
+            (4, 4), (4, 5), (8, 4), (8, 5)
         ]
 
         distance_to_goal = self.width + self.height
@@ -98,6 +103,14 @@ class DeliveryEnv(gym.Env):
             print('Hell state!')
             reward += -10
             done = True
+
+        # going to holes is also a hell state
+        if self.deliveryPosition in self.holesArray:
+            print('Hell state!')
+            reward += -10
+            done = True
+
+        
 
         # check if the delivery agent is at the customer position
         if self.deliveryPosition == self.customerPosition and self.gotFoodFromRestaurant:
@@ -184,7 +197,9 @@ class DeliveryEnv(gym.Env):
                 if (i, j) in self.treesArray:
                     self._renderTree(i, j, self.turn)
                     continue
-
+                if (i, j) in self.holesArray:
+                    self._renderPicture(holeImage, i, j)
+                    continue
                 pygame.draw.rect(self.screen, color, (i * self.cell_size, j * self.cell_size, self.cell_size - 1, self.cell_size - 1))    
         
 
